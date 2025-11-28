@@ -1,0 +1,11 @@
+{{- if .Values.mopClientAnonymization.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mop-anonymization-config
+  namespace: {{ .Values.mopClientAnonymization.namespace }}
+  labels:
+    app: mop-anonymization
+    {{- include "mop-client.labels" . | nindent 4 }}
+data: {}
+{{- end }}

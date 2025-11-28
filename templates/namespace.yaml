@@ -1,0 +1,11 @@
+{{- range $app, $cfg := .Values }}
+{{- if $cfg.namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $cfg.namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ $.Release.Name }}
+---
+{{- end }}
+{{- end }}

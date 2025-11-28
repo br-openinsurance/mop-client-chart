@@ -1,0 +1,30 @@
+apiVersion: v2
+name: mop-client
+description: Helm Chart para instalação do MOP Client (mop-anonymization e demais componentes) em clusters Kubernetes de participantes.
+type: application
+
+# Versão do chart (empacotamento Helm)
+version: 0.1.0
+
+# Versão da aplicação (pode seguir o ciclo de release do produto)
+appVersion: "0.1.0"
+
+# Opcional, mas recomendado
+kubeVersion: ">=1.24.0-0"
+
+keywords:
+  - mop
+  - open-insurance
+  - client
+  - anonymization
+  - k8s
+
+home: "https://github.com/br-openinsurance-infra/mop-client-chart"
+sources:
+  - "https://github.com/br-openinsurance-infra/mop-client-chart"
+
+maintainers:
+  - name: "Luiz Henrique De Lima Siqueira"
+    email: "seu-email@dominio.com"
+
+icon: ""
