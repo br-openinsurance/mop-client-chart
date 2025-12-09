@@ -1,11 +1,13 @@
 {{- range $app, $cfg := .Values }}
-{{- if $cfg.namespace }}
+{{- if and $cfg.enabled $cfg.namespace }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: {{ $cfg.namespace }}
   labels:
-    app.kubernetes.io/managed-by: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/created-by: "helm"
+    app.kubernetes.io/part-of: {{ $.Release.Name }}
 ---
 {{- end }}
 {{- end }}
