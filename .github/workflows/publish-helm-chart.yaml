@@ -1,0 +1,55 @@
+name: Publish Helm Chart to GHCR
+
+on:
+  push:
+    tags:
+      - "v*.*.*"   # v0.1.0, v0.2.0, etc.
+
+permissions: write-all
+
+jobs:
+  publish:
+    runs-on:
+      group: DEV   # alinhado ao seu padrão organizacional
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "v3.15.0"
+
+      - name: Helm Lint
+        run: helm lint .
+
+      # Garante que a tag e o Chart.yaml version estão sincronizados
+      - name: Validate chart version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          CHART_VERSION=$(grep '^version:' Chart.yaml | awk '{print $2}')
+          echo "Tag version:   $TAG_VERSION"
+          echo "Chart version: $CHART_VERSION"
+          if [ "$TAG_VERSION" != "$CHART_VERSION" ]; then
+            echo "ERRO: versão da tag ($TAG_VERSION) é diferente do Chart.yaml ($CHART_VERSION)."
+            exit 1
+          fi
+
+      - name: Package Chart
+        run: |
+          helm package .
+          ls -lh *.tgz
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Chart to GHCR (OCI)
+        run: |
+          CHART_PACKAGE=$(ls *.tgz)
+          echo "Enviando pacote: $CHART_PACKAGE"
+          helm push "$CHART_PACKAGE" oci://ghcr.io/br-openinsurance-infra/mop-client-chart
