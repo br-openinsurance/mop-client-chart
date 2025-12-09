@@ -2,14 +2,10 @@
 # 🌍 GLOBAL
 # ============================================================
 global:
-  # Registry onde TODAS as imagens estão
   imageRegistry: ghcr.io/br-openinsurance-infra
 
-  # Caso algum cliente use Registry privado e precise secret
-  imagePullSecrets: []
-  # exemplo:
-  # imagePullSecrets:
-  #   - name: regcred
+  imagePullSecrets:
+    - name: ghcr-secret
 
   # URL do MOP Server (todos os componentes usam)
   mopServerUrl: "https://mop-server.example.com"
