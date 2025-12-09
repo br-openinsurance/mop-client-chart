@@ -4,10 +4,10 @@ description: Helm Chart para instalação do MOP Client (mop-anonymization e dem
 type: application
 
 # Versão do chart (empacotamento Helm)
-version: 0.1.0
+version: 0.1.1
 
 # Versão da aplicação (pode seguir o ciclo de release do produto)
-appVersion: "0.1.0"
+appVersion: "0.1.1"
 
 # Opcional, mas recomendado
 kubeVersion: ">=1.24.0-0"
