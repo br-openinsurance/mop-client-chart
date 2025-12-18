@@ -1,0 +1,45 @@
+{{- if .Values.mopValidator.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mop-validator
+  namespace: {{ .Values.mopValidator.namespace }}
+  labels:
+    app: mop-validator
+    {{- include "mop-client.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.mopValidator.replicaCount }}
+  selector:
+    matchLabels:
+      app: mop-validator
+  template:
+    metadata:
+      labels:
+        app: mop-validator
+        {{- include "mop-client.labels" . | nindent 8 }}
+    spec:
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
+
+      containers:
+        - name: mop-validator
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.mopValidator.image.repository }}:{{ .Values.mopValidator.image.tag }}"
+          imagePullPolicy: {{ .Values.mopValidator.image.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.mopValidator.service.port }}
+
+          env:
+            - name: MOP_SERVER_URL
+              value: "{{ .Values.global.mopServerUrl }}"
+            {{- range $key, $value := .Values.mopValidator.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+
+          resources:
+            {{- toYaml .Values.mopValidator.resources | nindent 12 }}
+{{- end }}

@@ -1,0 +1,18 @@
+{{- if .Values.mopValidator.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mop-validator
+  namespace: {{ .Values.mopValidator.namespace }}
+  labels:
+    app: mop-validator
+    {{- include "mop-client.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mopValidator.service.type }}
+  selector:
+    app: mop-validator
+  ports:
+    - name: http
+      port: {{ .Values.mopValidator.service.port }}
+      targetPort: {{ .Values.mopValidator.service.port }}
+{{- end }}

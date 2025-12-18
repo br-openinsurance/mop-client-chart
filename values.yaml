@@ -176,8 +176,8 @@ mopGateway:
 # 🚀 mop-validator
 # ============================================================
 mopValidator:
-  enabled: false
-  namespace: "mop-validator"
+  enabled: true
+  namespace: "validator-client"
 
   replicaCount: 1
 
@@ -186,8 +186,13 @@ mopValidator:
     tag: "1.0.0"
     pullPolicy: IfNotPresent
 
+  image:
+    repository: mop-client-data-validator/open-insurance-mop-validator
+    tag: "develop"
+    pullPolicy: IfNotPresent
+
   service:
-    port: 8080
+    port: 8084
     type: ClusterIP
 
   env: {}
