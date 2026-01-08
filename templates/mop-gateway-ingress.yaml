@@ -1,0 +1,39 @@
+{{- if and .Values.mopGateway.enabled .Values.mopGateway.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mop-gateway
+  namespace: {{ .Values.mopGateway.namespace }}
+  labels:
+    app: mop-gateway
+    {{- include "mop-client.labels" . | nindent 4 }}
+  {{- with .Values.mopGateway.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.mopGateway.ingress.className }}
+  ingressClassName: {{ .Values.mopGateway.ingress.className | quote }}
+  {{- end }}
+
+  {{- if .Values.mopGateway.ingress.tls }}
+  tls:
+    {{- toYaml .Values.mopGateway.ingress.tls | nindent 4 }}
+  {{- end }}
+
+  rules:
+    {{- range .Values.mopGateway.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path | quote }}
+            pathType: {{ default "Prefix" .pathType }}
+            backend:
+              service:
+                name: mop-gateway
+                port:
+                  number: {{ $.Values.mopGateway.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

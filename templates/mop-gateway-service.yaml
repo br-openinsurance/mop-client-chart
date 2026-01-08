@@ -1,0 +1,18 @@
+{{- if .Values.mopGateway.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mop-gateway
+  namespace: {{ .Values.mopGateway.namespace }}
+  labels:
+    app: mop-gateway
+    {{- include "mop-client.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mopGateway.service.type }}
+  selector:
+    app: mop-gateway
+  ports:
+    - name: http
+      port: {{ .Values.mopGateway.service.port }}
+      targetPort: {{ .Values.mopGateway.service.port }}
+{{- end }}

@@ -125,14 +125,14 @@ mopDataAnonymization:
 # 🚀 mop-gateway
 # ============================================================
 mopGateway:
-  enabled: false
-  namespace: "mop-gateway"
+  enabled: true
+  namespace: "gateway-client"
 
-  replicaCount: 2
+  replicaCount: 1
 
   image:
-    repository: mop-gateway
-    tag: "1.0.0"
+    repository: opin-mop-gateway/open-insurance-mop-gateway
+    tag: "develop"
     pullPolicy: IfNotPresent
 
   service:
@@ -140,9 +140,14 @@ mopGateway:
     type: ClusterIP
 
   ingress:
-    enabled: false
+    enabled: true
     className: ""
-    hosts: []
+    annotations: {}
+    hosts:
+      - host: mop-client-gateway-dev-client.intranet.opinbrasil
+        paths:
+          - path: /
+            pathType: Prefix
     # exemplo:
     # hosts:
     #   - host: mop-gateway.example.com
@@ -167,8 +172,8 @@ mopGateway:
 
   hpa:
     enabled: false
-    minReplicas: 2
-    maxReplicas: 6
+    minReplicas: 1
+    maxReplicas: 3
     targetCPUUtilizationPercentage: 80
 
 
@@ -180,11 +185,6 @@ mopValidator:
   namespace: "validator-client"
 
   replicaCount: 1
-
-  image:
-    repository: mop-validator
-    tag: "1.0.0"
-    pullPolicy: IfNotPresent
 
   image:
     repository: mop-client-data-validator/open-insurance-mop-validator
@@ -208,7 +208,7 @@ mopValidator:
   hpa:
     enabled: false
     minReplicas: 1
-    maxReplicas: 4
+    maxReplicas: 3
     targetCPUUtilizationPercentage: 80
 
 
