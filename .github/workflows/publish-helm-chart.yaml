@@ -9,8 +9,7 @@ permissions: write-all
 
 jobs:
   publish:
-    runs-on:
-      group: DEV   # alinhado ao seu padrão organizacional
+    runs-on: arc-runners-default
 
     steps:
       - name: Checkout repository
