@@ -1,0 +1,98 @@
+{{- if .Values.brokerClient.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: {{ .Values.brokerClient.namespace }}
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    {{- include "mop-client.labels" . | nindent 4 }}
+spec:
+  serviceName: rabbitmq-headless
+  replicas: {{ .Values.brokerClient.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rabbitmq
+    spec:
+      serviceAccountName: rabbitmq
+
+      {{- if .Values.brokerClient.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.brokerClient.imagePullSecrets | nindent 8 }}
+      {{- else if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
+
+      terminationGracePeriodSeconds: 120
+      securityContext:
+        fsGroup: 1001
+
+      containers:
+        - name: rabbitmq
+          image: "{{ .Values.brokerClient.image.registry }}/{{ .Values.brokerClient.image.repository }}:{{ .Values.brokerClient.image.tag }}"
+          imagePullPolicy: {{ .Values.brokerClient.image.pullPolicy }}
+
+          ports:
+            - name: amqp
+              containerPort: {{ .Values.brokerClient.service.ports.amqp }}
+            - name: management
+              containerPort: {{ .Values.brokerClient.management.service.ports.http }}
+            - name: epmd
+              containerPort: 4369
+            - name: dist
+              containerPort: 25672
+
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_SERVICE_NAME
+              value: rabbitmq-headless
+            - name: K8S_ADDRESS_TYPE
+              value: hostname
+            - name: RABBITMQ_USE_LONGNAME
+              value: "true"
+            - name: RABBITMQ_NODE_NAME
+              value: rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+            - name: RABBITMQ_USERNAME
+              value: {{ .Values.brokerClient.auth.username | quote }}
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-password
+            - name: RABBITMQ_ERL_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-erlang-cookie
+            - name: RABBITMQ_PLUGINS
+              value: {{ .Values.brokerClient.extraPlugins | quote }}
+
+          resources:
+            {{- toYaml .Values.brokerClient.resources | nindent 12 }}
+
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/rabbitmq/mnesia
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          {{- toYaml .Values.brokerClient.persistence.accessModes | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .Values.brokerClient.persistence.size | quote }}
+{{- end }}
