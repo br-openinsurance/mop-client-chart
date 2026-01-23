@@ -7,6 +7,14 @@ global:
   imagePullSecrets:
     - name: ghcr-secret
 
+  registryCredentials:
+    enabled: false
+    secretName: ghcr-secret
+    server: ghcr.io
+    username: ""      # o cliente informa no values-client.yaml
+    password: ""      # o cliente informa no values-client.yaml (PAT com read:packages)
+    email: ""         # opcional
+
   # URL do MOP Server (todos os componentes usam)
   mopServerUrl: "https://mop-server.example.com"
 

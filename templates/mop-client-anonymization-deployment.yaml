@@ -22,8 +22,10 @@ spec:
         {{- include "mop-client.labels" . | nindent 8 }}
 
     spec:
+      {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
 
       containers:
         - name: mop-anonymization
