@@ -149,7 +149,7 @@ mopGateway:
 
   ingress:
     enabled: true
-    className: ""
+    className: "nginx"
     annotations: {}
     hosts:
       - host: mop-client-gateway-dev-client.intranet.opinbrasil
