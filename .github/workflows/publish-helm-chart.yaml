@@ -51,4 +51,4 @@ jobs:
         run: |
           CHART_PACKAGE=$(ls *.tgz)
           echo "Enviando pacote: $CHART_PACKAGE"
-          helm push "$CHART_PACKAGE" oci://ghcr.io/br-openinsurance-infra/mop-client-chart
+          helm push "$CHART_PACKAGE" oci://ghcr.io/br-openinsurance/mop-client-chart
