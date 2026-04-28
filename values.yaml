@@ -139,7 +139,7 @@ mopGateway:
   replicaCount: 1
 
   image:
-    repository: opin-mop-gateway/open-insurance-mop-gateway
+    repository: openinsurance-mop-gateway-pub
     tag: "develop"
     pullPolicy: IfNotPresent
 
