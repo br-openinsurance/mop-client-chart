@@ -2,7 +2,7 @@
 # 🌍 GLOBAL
 # ============================================================
 global:
-  imageRegistry: ghcr.io/br-openinsurance-infra
+  imageRegistry: ghcr.io/br-openinsurance
 
   imagePullSecrets:
     - name: ghcr-secret
